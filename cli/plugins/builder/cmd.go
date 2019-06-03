@@ -102,7 +102,9 @@ func runBuilder(builderBin string, builderName string, args []string) error {
 
 	newEnv := os.Environ()
 	newEnv = append(newEnv, fmt.Sprintf("PATH=%s:%s", path, builderBin))
+	fmt.Println("======", newEnv)
 	builderCmd.Env = newEnv
+
 	builderCmd.Stdout = os.Stdout
 	builderCmd.Stderr = os.Stderr
 	defer func() {
