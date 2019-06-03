@@ -96,12 +96,13 @@ func runBuilder(builderBin string, builderName string, args []string) error {
 	builderCmd := exec.CommandContext(ctx, builderName, buildArgs...)
 	builderCmd.Dir = builderBin
 
-	newEnv := os.Environ()
 	path := os.Getenv("PATH")
+
+	os.Unsetenv("PATH")
+
+	newEnv := os.Environ()
 	newEnv = append(newEnv, fmt.Sprintf("PATH=%s:%s", path, builderBin))
-
 	builderCmd.Env = newEnv
-
 	builderCmd.Stdout = os.Stdout
 	builderCmd.Stderr = os.Stderr
 	defer func() {
@@ -116,6 +117,9 @@ func runBuilder(builderBin string, builderName string, args []string) error {
 			return fmt.Errorf("build app failed, %s", err.Error())
 		}
 	}
+	defer func() {
+		os.Setenv("PATH", path)
+	}()
 	return nil
 }
 
