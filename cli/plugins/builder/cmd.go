@@ -14,14 +14,31 @@ import (
 )
 
 func init() {
+
+	fePluginCommand.Flags().StringVar(&outFile, "file", "", "Path to Flogo application json file")
+	fePluginCommand.Flags().StringVar(&outFile, "f", "", "Path to Flogo application json file")
+
+	fePluginCommand.Flags().StringVar(&outFile, "name", "", "Name of the binary. If not provided, binary with name <APPNAME>-<OS_NAME>-<OS_ARCH> will be generated")
+	fePluginCommand.Flags().StringVar(&outFile, "n", "", "Name of the binary. If not provided, binary with name <APPNAME>-<OS_NAME>-<OS_ARCH> will be generated")
+
+	fePluginCommand.Flags().StringVar(&outFile, "output", "", "Folder where binary to be created. By default, binary will be created in current directory")
+	fePluginCommand.Flags().StringVar(&outFile, "o", "", "Folder where binary to be created. By default, binary will be created in current directory")
+
+	fePluginCommand.Flags().StringVar(&outFile, "platform", "", "Build binary for specific platform. Value must be specified in the form of <OS_NAME>/<OS_ARCHITECTURE> e.g. linux/386, linux/amd64, By default, current OS is used")
+	fePluginCommand.Flags().StringVar(&outFile, "p", "", "Build binary for specific platform. Value must be specified in the form of <OS_NAME>/<OS_ARCHITECTURE> e.g. linux/386, linux/amd64, By default, current OS is used")
+
+	fePluginCommand.Flags().BoolVar(&ok, "verbose", false, "Enables verbose progress and debug output")
+	fePluginCommand.Flags().BoolVar(&ok, "v", false, "Enables verbose progress and debug output")
+
 	enterpriseBuilderCmd.AddCommand(fePluginCommand)
+
 	common.RegisterPlugin(enterpriseBuilderCmd)
 }
 
 var outFile string
-
+var ok bool
 var enterpriseBuilderCmd = &cobra.Command{
-	Use:   "febuild",
+	Use:   "febuilder",
 	Short: "Flogo Enterprise builder support",
 	Long:  "Using this command to build Flogo Enterprise apps",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -29,14 +46,13 @@ var enterpriseBuilderCmd = &cobra.Command{
 }
 
 var fePluginCommand = &cobra.Command{
-	Use:   "upgrade [flogo.json]",
-	Short: "upgrade flogo.json",
-	Long:  "Upgrades the flogo.json file",
-	Args:  cobra.MaximumNArgs(1),
+	Use:   "build [flogo.json]",
+	Short: "build flogo.json",
+	Long:  "build the flogo.json file",
 	Run: func(cmd *cobra.Command, args []string) {
 
+		fmt.Println("===================", args)
 		if len(args) > 0 && args[0] != "" {
-
 			binFolder, excName := getFEBuilder()
 			err := runBuilder(binFolder, excName, args)
 			if err != nil {
