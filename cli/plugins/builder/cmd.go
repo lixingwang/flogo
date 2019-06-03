@@ -93,17 +93,19 @@ func runBuilder(builderBin string, builderName string, args []string) error {
 		buildArgs[i+1] = v
 	}
 
+	path := os.Getenv("PATH")
+	path = fmt.Sprintf("%s:%s", path, builderBin)
+	os.Setenv("PATH", path)
+
 	builderCmd := exec.CommandContext(ctx, builderName, buildArgs...)
 	builderCmd.Dir = builderBin
-
-	path := os.Getenv("PATH")
-
-	os.Unsetenv("PATH")
-
-	newEnv := os.Environ()
-	newEnv = append(newEnv, fmt.Sprintf("PATH=%s:%s", path, builderBin))
-	fmt.Println("======", newEnv)
-	builderCmd.Env = newEnv
+	//
+	//os.Unsetenv("PATH")
+	//
+	//newEnv := os.Environ()
+	//newEnv = append(newEnv, fmt.Sprintf("PATH=%s:%s", path, builderBin))
+	//fmt.Println("======", newEnv)
+	//builderCmd.Env = newEnv
 
 	builderCmd.Stdout = os.Stdout
 	builderCmd.Stderr = os.Stderr
