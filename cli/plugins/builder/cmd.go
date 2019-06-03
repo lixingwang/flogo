@@ -63,6 +63,13 @@ var fePluginCommand = &cobra.Command{
 
 		if len(output) > 0 {
 			newArg = append(newArg, "-o", output)
+		} else {
+			currentDir, err := os.Getwd()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Failed to abtain currect dir, due to %s", err)
+				os.Exit(1)
+			}
+			output = currentDir
 		}
 
 		if len(platform) > 0 {
@@ -99,14 +106,6 @@ func runBuilder(builderBin string, builderName string, args []string) error {
 
 	builderCmd := exec.CommandContext(ctx, builderName, buildArgs...)
 	builderCmd.Dir = builderBin
-	//
-	//os.Unsetenv("PATH")
-	//
-	//newEnv := os.Environ()
-	//newEnv = append(newEnv, fmt.Sprintf("PATH=%s:%s", path, builderBin))
-	//fmt.Println("======", newEnv)
-	//builderCmd.Env = newEnv
-
 	builderCmd.Stdout = os.Stdout
 	builderCmd.Stderr = os.Stderr
 	defer func() {
