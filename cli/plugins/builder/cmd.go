@@ -134,6 +134,7 @@ func getFEBuilder() (string, string) {
 	}
 
 	builderBin := filepath.Join(flogoHome, "bin")
+	fmt.Println(runtime.GOOS)
 	var builderName string
 	if runtime.GOOS == "linux" {
 		builderName = "builder-linux_amd64"
